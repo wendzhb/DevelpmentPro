@@ -1,0 +1,170 @@
+1.简介：
+    收集崩溃信息上传服务器
+    把崩溃的信息保存到内存卡中，等上线之后将内存卡中的崩溃信息上传到服务器。
+    第三方：腾讯bugly 友盟
+
+
+2.阿里开源解决方案
+    NDK: JAVA -->C/C++ 不会具体讲 内涵段子讲完 6月份
+    1.自定义View(最基础的东西)
+    2.系统架构 23种 RXJava 自己动手写数据库框架
+    3.系统优化
+    4.NDK C/C++ 图片编解码 视频编解码 视频压缩 直播推流 阿里NDK...
+
+    添加依赖库：
+        compile 'com.alipay.euler:andfix:0.5.0@aar'
+    生成差分包
+        命令是：apkpatch.bat -f <new> -t <old> -o <output> -k <keystore> -p <*> -a <alias> -e <*>
+
+        -f : 没有Bug的新版本apk
+        -t : 有bug的旧版本apk
+        -o : 生成的补丁文件所放的文件夹
+        -k : 签名打包密钥
+        -p : 签名打包密钥密码
+        -a : 签名密钥别名
+        -e : 签名别名密码（这样一般和密钥密码一致）
+
+    我的命令：apkpatch.bat -f new.apk -t old.apk -o out -k essayjoke.jks -p 123456 -a essayjoke -e 123456
+
+    源码的实现
+    @MethodReplace(clazz="com.zhbstudy.essayjoke.MainActivity$1", method="onClick")
+    public void onClick(View paramView){
+        Toast.makeText(this.this$0, "测试2", 1).show();
+    }
+    解决方案
+    static void replaceMethod(JNIEnv* env, jclass clazz, jobject src,
+            jobject dest) {
+        if (isArt) {
+            art_replaceMethod(env, src, dest);
+        } else {
+            dalvik_replaceMethod(env, src, dest);
+        }
+    }
+
+    4.4版本以后isArt art架构; 4.4版本之前dalvik架构
+
+    extern void __attribute__ ((visibility ("hidden"))) dalvik_replaceMethod(
+            JNIEnv* env, jobject src, jobject dest) {
+        jobject clazz = env->CallObjectMethod(dest, jClassMethod);
+        ClassObject* clz = (ClassObject*) dvmDecodeIndirectRef_fnPtr(
+                dvmThreadSelf_fnPtr(), clazz);
+        clz->status = CLASS_INITIALIZED;
+
+        Method* meth = (Method*) env->FromReflectedMethod(src);
+        Method* target = (Method*) env->FromReflectedMethod(dest);
+        LOGD("dalvikMethod: %s", meth->name);
+
+    //    meth->clazz = target->clazz;
+        meth->accessFlags |= ACC_PUBLIC;
+        meth->methodIndex = target->methodIndex;
+        meth->jniArgInfo = target->jniArgInfo;
+        meth->registersSize = target->registersSize;
+        meth->outsSize = target->outsSize;
+        meth->insSize = target->insSize;
+
+        meth->prototype = target->prototype;
+        meth->insns = target->insns;
+    　　// 准确的说不能算是修复只能说是指向已修复的方法
+        meth->nativeFunc = target->nativeFunc;
+    }
+
+    正式开发需要注意的地方：
+    1.每次生成之后一定要测试；
+    2.尽量的不要分包，不要分多个dex
+    3.混淆的时候涉及到的NDK andfix.java不要混淆
+    4.生成包之后一般会加固，这个时候生成的差分包，一定要在之前生成
+    5.既然是去修复方法，不能增加成员变量，不能增加方法
+
+    NDK的必要：
+    压缩图片 bitmapfactory.decodeFile()去压缩，3M 100K NDK libjpeg so压缩
+            gif动画   GifView显示   OOM    ndk去处理
+
+3.自己实现的方案。(Tinker)
+    classloader的源码，类的加载机制
+
+    activity的加载流程
+
+        activity = mInstrumentation.newActivity(
+                            cl, component.getClassName(), r.intent);
+
+        public Activity newActivity(ClassLoader cl, String className,
+                    Intent intent)
+                    throws InstantiationException, IllegalAccessException,
+                    ClassNotFoundException {
+                //通过classloader找到activity的class，再利用反射实例化对象 TestActivity
+                return (Activity)cl.loadClass(className).newInstance();
+        }
+
+
+        protected Class<?> loadClass(String name, boolean resolve)
+                throws ClassNotFoundException
+        {
+                // First, check if the class has already been loaded
+                Class c = findLoadedClass(name);
+                if (c == null) {
+
+                    if (c == null) {
+                        // If still not found, then invoke findClass in order
+                        // to find the class.
+                        long t1 = System.nanoTime();
+                        c = findClass(name);
+
+                        // this is the defining class loader; record the stats
+                    }
+                }
+                return c;
+        }
+
+        PathClassLoader -->BaseDexClassLoader -->ClassLoader
+
+        findClass(name)
+
+        DexPathList
+
+        findClass
+
+        BaseDexClassLoader -->DexPathList -->findClass
+         public Class findClass(String name, List<Throwable> suppressed) {
+               for (Element element : dexElements) {
+                   DexFile dex = element.dexFile;
+
+               if (dex != null) {
+                       Class clazz = dex.loadClassBinaryName(name, definingContext, suppressed);
+                  if (clazz != null) {
+                          return clazz;
+                        }
+                    }
+               }
+               if (dexElementsSuppressedExceptions != null) {
+                   suppressed.addAll(Arrays.asList(dexElementsSuppressedExceptions));
+               }
+               return null;
+         }
+
+开发中的一些细节
+1.可以把出错的class重新打成一个fix.dex
+    因为会用到加固或者混淆，这个方法不太可取
+2.采取分包方式：
+    把不会出错也不能出错的分成一个dex(尽量不要混淆)，其他的留在另一个dex,方法没有超过65536 那么Android studio需要去官网找分包，
+    而且运行的时候如果从dex过大会影响启动速度
+3.直接下载整个dex包，然后进行插入修复，问题在于fix.dex可能比较大，2M左右  //省事
+
+能增加成员变量，也可以增加方法，还可以增加类，但是不能增加资源(Tinker可以增加) 变成插件开发
+
+
+
+高级UI面试题：
+scrollview 嵌套 listview 会显示不全
+
+设计模式：build设计模式，需要看alertdialog源码
+
+1.插件换肤
+
+2.插件开发
+  看activity启动流程
+
+3.服务常驻后台，防杀死，IPC通讯
+
+4.图片压缩 ndk 7个步骤 采用微信的方式
+
+5.直播推流 ndk

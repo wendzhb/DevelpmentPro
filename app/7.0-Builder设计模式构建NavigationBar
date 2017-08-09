@@ -1,0 +1,24 @@
+1.0 Handler原理 系统源码 listview源码 framelayout源码 alertdialog源码
+
+2.0 builder设计模式
+
+    头部： 在布局文件中写的：1.用系统的
+                          2.Toolbar
+                          3.自定义的(自定义view写在布局文件)
+
+3.0 builder构建navigationbar分析与传统方式对比
+
+    在布局文件里做处理
+
+4.0 navigationbar分析胜过代码
+
+    泛型* + builder设计模式
+
+5.0 navigationbar优化
+    1.0 按返回默认关闭
+    2.0 完善布局
+    3.0 R.layout布局最好用toolbar 运用系统的MD动画
+
+数据库框架：模式 + 泛型 + 反射，按需定制 db 写到内存卡中的 data data
+
+加密 批量的优化

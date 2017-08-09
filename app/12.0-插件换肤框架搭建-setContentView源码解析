@@ -1,0 +1,136 @@
+回顾：
+
+    目前能够做到的就是能够获取另一个本地没安装的apk的资源文件（从网上下载），
+
+    实现换肤：
+        1.每一次打开的都是新的皮肤，
+        2.换肤之后所有的activity里面的view都要换肤
+        3.每次重新进入app也需要换肤
+
+    解决方案：
+        1.每一个activity里面都把需要换肤的view找出来，然后调用代码去换肤（死板的方法）
+        2.获取activity里面的根布局，然后通过不断的循环获取子view，通过tag
+        3.拦截view的创建，这个是目前比较好的，系统是如何加载界面的
+
+1.activity的setContentView源码阅读
+
+    @Override
+    public void setContentView(int layoutResID) {
+        // Note: FEATURE_CONTENT_TRANSITIONS may be set in the process of installing the window
+        // decor, when theme attributes and the like are crystalized. Do not check the feature
+        // before this happens.
+        if (mContentParent == null) {
+            installDecor();
+        }
+
+        //inflate
+        mLayoutInflater.inflate(layoutResID, mContentParent);
+    }
+
+
+    private void installDecor() {
+            mForceDecorInstall = false;
+            if (mDecor == null) {
+                mDecor = generateDecor(-1);
+            }
+            if (mContentParent == null) {
+                mContentParent = generateLayout(mDecor);
+            }
+    }
+
+    protected DecorView generateDecor(int featureId) {
+        ...
+        return new DecorView(context, featureId, this, getAttributes());
+    }
+
+
+    protected ViewGroup generateLayout(DecorView decor) {
+        // Inflate the window decor.
+        int layoutResource;
+        //做一系列的判断，去加载系统的layout资源文件。
+        ...
+        //解析实例化系统的布局并加入到DecorView
+        mDecor.onResourcesLoaded(mLayoutInflater, layoutResource);.
+
+        //找一个叫做android.internal.R.id.content的一个FrameLayout
+        ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);
+
+        return contentParent;
+    }
+
+    void onResourcesLoaded(LayoutInflater inflater, int layoutResource) {
+
+        mDecorCaptionView = createDecorCaptionView(inflater);
+        //解析实例化系统的布局
+        final View root = inflater.inflate(layoutResource, null);
+        if (mDecorCaptionView != null) {
+            if (mDecorCaptionView.getParent() == null) {
+                addView(mDecorCaptionView,
+                        new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+            }
+            //把系统的布局加入到DecorView
+            mDecorCaptionView.addView(root,
+                    new ViewGroup.MarginLayoutParams(MATCH_PARENT, MATCH_PARENT));
+        } else {
+
+            // Put it below the color views.
+            addView(root, 0, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        }
+        mContentRoot = (ViewGroup) root;
+        initializeElevation();
+    }
+
+2.appcompaactivity的setContentView源码阅读
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        getDelegate().setContentView(layoutResID);
+    }
+
+
+    @Override
+    public void setContentView(int resId) {
+        ensureSubDecor();
+        ViewGroup contentParent = (ViewGroup) mSubDecor.findViewById(android.R.id.content);
+        contentParent.removeAllViews();
+        LayoutInflater.from(mContext).inflate(resId, contentParent);
+        mOriginalWindowCallback.onContentChanged();
+    }
+
+    extends Activity 和 AppCompatActivity的区别
+    //extends Activity mImageIv is ImageView
+    //extends AppCompatActivity mImageView is AppCompatImageView tint
+    AppCompatActivity在创建view的时候会被拦截，不会走系统的LayoutInflater的创建，就会被替换掉一些特定的view
+
+3.layoutinflate源码阅读
+
+    3.1 LayoutInflater.from(this)获取的源码
+    //获取系统的服务
+    LayoutInflater LayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+    /**
+    * Gets a system service from a given context.
+    */
+    public static Object getSystemService(ContextImpl ctx, String name) {
+       ServiceFetcher<?> fetcher = SYSTEM_SERVICE_FETCHERS.get(name);
+       return fetcher != null ? fetcher.getService(ctx) : null;
+    }
+
+    ServiceFetcher<?> fetcher = SYSTEM_SERVICE_FETCHERS.get(name);//从一个静态hashmap集合取值
+
+    LayoutInflater.from(this),他是一个系统服务，他是一个单例设计模式，单个实例在内存中只有一个事例
+
+    3.2实例化view的inflate方法的源码
+    View view;
+    //前提是有没有设置factory  AppCompatActivity已经设置了
+    if (mFactory2 != null) {
+        view = mFactory2.onCreateView(parent, name, context, attrs);
+    } else if (mFactory != null) {
+        view = mFactory.onCreateView(name, context, attrs);
+    } else {
+        view = null;
+    }
+
+    //通过反射创建view
+
+4.拦截view的创建

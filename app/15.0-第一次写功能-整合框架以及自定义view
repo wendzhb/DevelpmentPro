@@ -1,0 +1,27 @@
+1.Android studio 自定义模板
+
+    主页布局：
+    1.1 中间viewpager + fragment
+    1.2 底部linearlayout/bottomnavigationView/radiogroup
+    1.3 basefragment
+2.android 6.0运行时权限处理框架
+
+3.字体变色
+
+4.adapter设计模式的viewpager指示器
+
+5.Android无限广告轮播图
+
+6.recycleview万能适配器以及添加头部底部
+
+7.自定义图片选择器
+    1.讲究的是功能，只要实现就好
+        第一个是扩展，第二点是优化
+    1.1 希望能够实现多选、单选，要不要拍照的功能，可以配置图片的最大选择张数，效果要求选择好的再次进来默认就是选择的
+        布局
+    1.2 功能：
+        1. 获取传递过来的参数
+        2. contentprovide获取内存卡中的所有图片
+        3. 展示获取到的图片显示到列表
+        4. 处理一下逻辑
+           1.每选择一张要选择的展示

@@ -1,0 +1,44 @@
+1.jpeg图片压缩算法解析
+    图片一般3-5M，直接上传后台压力太大，而且耗时
+    QQ weiXin 在后台开一个服务传输，在本地做了一个数据的缓存，图片压缩是必须的。
+
+    bitmapfactory压缩尺寸 compress()压缩质量，压缩的图片不太清晰， 200K以下就不太清晰，
+    第三方的压缩后都是在100K以下而且跟原图好像一样
+
+    早期很多图片压缩都是jpeg,压缩算法丢掉了，因为内存吃紧，skia他也有他的好处，把它用回来，采用jpeg压缩算法
+
+    RGB YCbCr YUV
+
+2.哈弗曼编码
+    树的概念，链表有栈
+    ABCDE ABCD 00 01 10 11  三个二进制位000 001 010 011 100 99bit
+
+3.NDK简介
+    JNI Java语言调用C和C++
+    NDK Android里面有运用JNI这种开发方式
+
+    好处：
+        1.安全，防止反编译
+        2.Java其实就是C和C++写的，很多算法Java写不了，只能用C和C++
+        3.速度上面会比Java运行速度快，运行效率高
+        4.方便少干活，ios调 Android调 Java后台要调，写一个就OK
+
+    开发中的人员配置：
+        小公司（Android工程师基本都是编译第三方的，然后写一写简单的C++或者C代码）
+        大一些（会有一个C和C++的工程师专门写代码算法，必须有一个懂Android的，可能需要调用Android自带的Native方法）
+
+    怎么去学：
+        入门：先看一个月的语法书，然后找一些开源的第三方的编译写一写（libjpeg,ffmpeg,fmod）,最后买几本书学习
+
+4.JPEG算法回顾
+    选择开源的C库jpeg压缩
+    libjpeg-->libjpeg-turbo是一个增强版
+    https://github.com/libjpeg-turbo/libjpeg-turbo
+
+    弄一个云服务器 阿里/腾讯（免费半个月） 可以尝试把里面的文件copy到jni目录下面然后开始写自己的代码
+
+5.编译第三方C库的一些套路
+    5.1下载编译.so，也可以选择copy第三方开源的C++和C文件
+    5.2copy到app的jni目录下面 不光要copy .so文件 还要copy头文件.h
+    5.3开始写Java层的native方法，生成头文件
+    5.4把生成好的头文件也copy到C++目录下面来

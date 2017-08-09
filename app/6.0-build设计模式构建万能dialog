@@ -1,0 +1,88 @@
+1.简介
+热修复：比较难
+5个类 思路一定要跟上 插件换肤 10个类 插件开发 手写数据库框架 rxjava + okhttp + retrofit
+希望：自定义view自己写过一些 了解一些设计模式 看过Android源码 反射
+
+2.Builder设计模式
+
+
+    AlertDialog的源码
+
+    final AlertController mAlert;
+
+    public static class Builder {
+        private final AlertController.AlertParams P;
+        ...
+    }
+
+    public AlertDialog create() {
+            // We can't use Dialog's 3-arg constructor with the createThemeContextWrapper param,
+            // so we always have to re-set the theme
+            final AlertDialog dialog = new AlertDialog(P.mContext, mTheme);
+            //组装P里面的参数（组装电脑）
+            P.apply(dialog.mAlert);
+            dialog.setCancelable(P.mCancelable);
+            if (P.mCancelable) {
+                dialog.setCanceledOnTouchOutside(true);
+            }
+            dialog.setOnCancelListener(P.mOnCancelListener);
+            dialog.setOnDismissListener(P.mOnDismissListener);
+            if (P.mOnKeyListener != null) {
+                dialog.setOnKeyListener(P.mOnKeyListener);
+            }
+            return dialog;
+    }
+
+    protected AlertDialog(@NonNull Context context, @StyleRes int themeResId) {
+            super(context, resolveDialogTheme(context, themeResId));
+            mAlert = new AlertController(getContext(), this, getWindow());
+    }
+
+    P.apply(dialog.mAlert);
+    组装P里面的参数（组装电脑）
+    public void apply(AlertController dialog) {
+        if (mCustomTitleView != null) {
+            dialog.setCustomTitle(mCustomTitleView);
+        } else {
+            if (mTitle != null) {
+                dialog.setTitle(mTitle);
+            }
+            if (mIcon != null) {
+                dialog.setIcon(mIcon);
+            }
+            if (mIconId != 0) {
+                dialog.setIcon(mIconId);
+            }
+            if (mIconAttrId != 0) {
+                dialog.setIcon(dialog.getIconAttributeResId(mIconAttrId));
+            }
+        }
+        ....
+    }
+    组装的规则就是有什么就拼装什么，所有会有一系列的判断
+
+    <?xml version="1.0" encoding="utf-8"?>
+      <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+          <item
+              android:left="-2dp"
+               android:right="-2dp"
+              android:top="-2dp">
+               <shape>
+                  <stroke android:width="1dp"
+                          android:color="@color/black"/>
+               </shape>
+           </item>
+
+3.Builder设计模式的工作流程
+    添加参数（P）--> 组装参数 --> 显示
+
+4.主要的对象
+    AlertDialog（电脑对象）
+
+    Builder:规范一系列的组装过程
+    AlertController:具体的构造器
+    AlertController.AlertParams:存放参数,一部分设置参数的功能
+
+5.构建万能的dialog
+
+6.表情

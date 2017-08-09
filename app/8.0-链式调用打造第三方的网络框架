@@ -1,0 +1,27 @@
+
+1.0 setContentView()的源码
+
+    installDecor();
+    //创建 Decor
+    mDecor = generateDecor(-1);
+    //加载根布局 Google自带的 layoutID.xml
+    //获取了 mContentParentView --> android.R.id.content
+    mContentParent = generateLayout(mDecor);
+    //把我们设置的layoutid加入到mContentParent
+    mLayoutInflater.inflate(layoutResID, mContentParent);
+
+
+
+2.0 第三方开源的网络框架
+
+3.0 okhttp retrofit volley(打造一套网络引擎)
+
+5个类     UML类图    PowerDesigner   erp系统
+
+优化
+    1.请求参数很多但有一些是公用的
+    2.回调每次都要用json转换,但是不能直接用泛型
+    3.数据库的问题，缓存 新闻类特有效果，第三方的数据缓存在data/data/xxx/database
+        APP缓存
+        okhttp自带缓存
+        在规定的时间内，访问的是同一路径是不会去后台获取数据的，而是直接获取缓存，如果超过规定时间，去后台请求数据

@@ -1,0 +1,137 @@
+1、getDeclaredMethods和getMethods的区别
+
+ Method	getDeclaredMethod(String name, Class... parameterTypes)
+          Returns a Method object that reflects the specified declared method of the class or interface represented by this Class object.
+ Method[] getDeclaredMethods()
+          Returns an array of Method objects reflecting all the methods declared by the class or interface represented by this Class object.
+
+
+ Method	getMethod(String name, Class... parameterTypes)
+          Returns a Method object that reflects the specified public member method of the class or interface represented by this Class object.
+ Method[]	getMethods()
+          Returns an array containing Method objects reflecting all the public member methods of the class or interface represented by this Classobject, including those declared by the class or interface and those inherited from superclasses and superinterfaces.
+    由此可见，getDeclaredMethod*()获取的是类自身声明的所有方法，包含public、protected和private方法。
+    getMethod*()获取的是类的所有共有方法，这就包括自身的所有public方法，和从基类继承的、从接口实现的所有public方法。
+
+实例一：getDeclaredMethod和getMethod的区别
+
+Say.java：
+
+package pkg.reflection;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public class Say {
+
+    public void say(String methodStr,String name, int age) throws SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException{
+    //  Method method = this.getClass().getMethod("say" + methodStr, new Class[]{String.class,int.class});              //1
+        Method method = this.getClass().getDeclaredMethod("say" + methodStr, new Class[]{String.class,int.class});      //2
+        method.invoke(this, new Object[]{name,age});
+    }
+
+    public void sayHello(String name, int age){
+        System.out.println("hello " + name + ",I know you are " + age);
+    }
+
+    protected void sayHi(String name, int age){
+        System.out.println("hi " + name + ",I know you are " + age);
+    }
+
+    private void sayBye(String name, int age){
+        System.out.println("bye " + name + ",I know you are " + age);
+    }
+
+}
+SayTest.java
+
+package pkg.reflection;
+
+import java.lang.reflect.InvocationTargetException;
+
+public class SayTest {
+
+    public static void main(String[] args) throws SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException{
+        new Say().say("Hello", "jianjianjiao", 22);
+        new Say().say("Hi", "jianjianjiao", 22);
+    }
+}
+当使用say方法里的//1语句时，main函数抛出异常，可见使用getMethod时，因为sayHi是保护方法，获取方法sayHi失败
+
+hello jianjianjiao,I know you are 22
+Exception in thread "main" java.lang.NoSuchMethodException: pkg.reflection.Say.sayHi(java.lang.String, int)
+    at java.lang.Class.getMethod(Unknown Source)
+    at pkg.reflection.Say.say(Say.java:9)
+    at pkg.reflection.SayTest.main(SayTest.java:27)
+
+当使用say方法里的//2语句时，可以正常调用
+
+hello jianjianjiao,I know you are 22
+hi jianjianjiao,I know you are 22
+
+可见，不能用java.lang.Class.getMethod方法获取自身的非public方法，用java.lang.Class.getDeclaredMethod方法可以。
+
+
+实例二：getDeclaredMethods和getMethods的区别
+
+ReflectionUtils.java
+
+package pkg.reflection;
+
+import java.lang.reflect.Method;
+
+public class ReflectionUtils {
+
+    public static void getMethodDeclaration(Class<?> clazz){
+        Method[] methods = clazz.getDeclaredMethods();
+        System.out.println("MethodDeclaration in " + clazz.getName());
+        for(Method method : methods){
+            method.setAccessible(true);
+            System.out.println(method.getName());
+        }
+    }
+
+    public static void getMethod(Class<?> clazz){
+        Method[] methods = clazz.getMethods();
+        System.out.println("Method in " + clazz.getName());
+        for(Method method : methods){
+            System.out.println(method.getName());
+        }
+    }
+
+}
+
+测试类 SayTest.java
+
+package pkg.reflection;
+
+import java.lang.reflect.InvocationTargetException;
+
+public class SayTest {
+
+    public static void main(String[] args) throws SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException{
+        ReflectionUtils.getMethod(Say.class);
+        ReflectionUtils.getMethodDeclaration(Say.class);
+    }
+}
+
+输出：
+
+Method in pkg.reflection.Say
+say
+sayHello
+wait
+wait
+wait
+equals
+toString
+hashCode
+getClass
+notify
+notifyAll
+MethodDeclaration in pkg.reflection.Say
+say
+sayHello
+sayHi
+sayBye
+可见，调用getMethods方法输出的是自身的public方法和父类Object的public方法。调用getDeclaredMethods方法输出的是自身的public、protected、private方法。

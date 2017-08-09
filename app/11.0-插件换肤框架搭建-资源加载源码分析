@@ -1,0 +1,152 @@
+1.这一期的内容
+
+    主要是阅读源码
+        1.1插件式换肤框架搭建
+        1.2进程间的通讯Service保活
+        1.3插件式架构
+        1.4自定义view
+        1.5图片压缩
+        1.6增量跟新
+
+2.插件式换肤框架的搭建思路
+
+    2.1思路：
+        2.1.1可以悄悄从网上下一个皮肤，apk文件，把它运行起来没有主界面，获取皮肤的时候利用反射（已过时）
+        2.1.2不需要运行可以直接获取本地的皮肤，前提已经从服务器上下载到本地
+        2.1.3Android support library23.2支持白天黑夜主题切换（最简单）皮肤实在apk里面的
+    2.2选一套比较好的方式开始实现
+        2.2.1解决的问题是如何获取另一个apk中的资源
+
+3.Google资源加载源码
+    imageview里面src图片最终是
+    mResources.loadDrawable(value, value.resourceId, mTheme);
+    其实是通过mResources Resources对象去读的
+
+    思考：资源的加载是通过Resources类，如果想去获取另外一个apk中的资源是不是可以自己实例化一个
+    只要清楚是怎么去实例化的就好，怎么new 的对象
+
+    Resources resource = new Resources(assets, dm, config, compatInfo)
+
+    //assets AssetManager资源管理
+    Resources(AssetManager assets, DisplayMetrics metrics, Configuration config)
+
+    //资源管理的创建
+    AssetManager assets = new AssetManager();
+    assets.addAssetPath(key.mResDir)  //mResDir apk的目录
+
+    /**
+     * Add an additional set of assets to the asset manager.  This can be
+     * either a directory or ZIP file.  Not for use by applications.  Returns
+     * the cookie of the added asset, or 0 on failure.
+     * {@hide}
+     */
+    public final int addAssetPath(String path) {
+        return  addAssetPathInternal(path, false);
+    }
+
+    private final int addAssetPathInternal(String path, boolean appAsLib) {
+        synchronized (this) {
+            int res = addAssetPathNative(path, appAsLib);
+            makeStringBlocks(mStringBlocks);
+            return res;
+        }
+    }
+
+    资源加载的总结：所有的资源加载是通过Resource --> 构建对象是直接new 的对象 --> AssetManager 其实是Resource的核心实例
+    --> 最终是通过AssetManager获取AssetManager实例化：
+    AssetManager assets = new AssetManager();
+    assets.addAssetPath(key.mResDir)    //可以是一个zip的路径
+
+    创建Resource的实例：
+    23种设计模式     场景和源码     第三方的框架      volley      AsyncHttpClient     RxJava    Retrofit   Galide
+
+4.native层的AssetManager
+
+    static void android_content_AssetManager_init(JNIEnv* env, jobject clazz, jboolean isSystem)
+    {
+        if (isSystem) {
+            verifySystemIdmaps();
+        }
+        //  AssetManager.cpp
+        AssetManager* am = new AssetManager();
+        if (am == NULL) {
+            jniThrowException(env, "java/lang/OutOfMemoryError", "");
+            return;
+        }
+
+        //添加默认的资源
+        am->addDefaultAssets();
+
+        ALOGV("Created AssetManager %p for Java object %p\n", am, clazz);
+        env->SetLongField(clazz, gAssetManagerOffsets.mObject, reinterpret_cast<jlong>(am));
+    }
+
+
+    bool AssetManager::addDefaultAssets()
+    {
+        const char* root = getenv("ANDROID_ROOT");
+        LOG_ALWAYS_FATAL_IF(root == NULL, "ANDROID_ROOT not set");
+
+        String8 path(root);
+        // 先添加一个路径 framework/framework-res.apk
+        // 首先初始化的时候会去加载系统的framework-res.apk资源
+        // 也就是说我们为什么能加载系统的资源如颜色、图片、文字等等
+        path.appendPath(kSystemAssets);
+
+        return addAssetPath(path, NULL);
+    }
+
+
+    bool AssetManager::addAssetPath(const String8& path, int32_t* cookie)
+    {
+        asset_path ap;
+
+        // 省略一些校验代码
+
+        // 判断是否已经加载过了
+        for (size_t i=0; i<mAssetPaths.size(); i++) {
+            if (mAssetPaths[i].path == ap.path) {
+                if (cookie) {
+                    *cookie = static_cast<int32_t>(i+1);
+                }
+                return true;
+            }
+        }
+
+        // 检查路径是否有一个androidmanifest . xml
+        Asset* manifestAsset = const_cast<AssetManager*>(this)->openNonAssetInPathLocked(
+                kAndroidManifest, Asset::ACCESS_BUFFER, ap);
+            if (manifestAsset == NULL) {
+                // 如果不包含任何资源
+                delete manifestAsset;
+                return false;
+            }
+            delete manifestAsset;
+            // 添加
+            mAssetPaths.add(ap);
+
+            // 新路径总是补充到最后
+            if (cookie) {
+                *cookie = static_cast<int32_t>(mAssetPaths.size());
+            }
+
+            if (mResources != NULL) {
+                appendPathToResTable(ap);
+            }
+
+            return true;
+        }
+    }
+
+    apk打包会生成两个比较重要的跟资源有关系：
+        1.R.java 一些id
+        2.resourcea.arsc    资源的映射信息     image_src   ResTable字符串的值信息 头信息
+
+
+NDK开发 先学半个月入门 学会查文档和资料，然后基于第三方的框架做点项目， 再回过头来买几本书学习
+
+打包开始-->到底干了些什么-->装到手机上-->Application走  启动应用  加载资源  怎么样构建界面  怎样实例化View
+Service启动流程  Binder驱动  View的事件分发  测量  等等
+
+
+setContentView界面怎么样实例化的

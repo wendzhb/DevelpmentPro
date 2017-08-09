@@ -1,0 +1,249 @@
+1.简介：
+内涵端子最终的源码会给到大家，我希望是你们自己去敲。
+视频的资源以及后面会讲一些什么东西   Grace 2746186102  验证信息：地区+名字
+QQ群  546270670
+
+2.设计模式的定义
+    1.解决特定的问题，管理Activity  单里设计模式   recyclerView添加头部和底部 装饰设计模式
+    2.有利于代码的规范，让代码更灵活。
+    3.有利于我们的开发，提高代码的复用。
+    个人理解：玩一些套路。23种 《Header First设计模式》
+
+3.模板设计模式的事例
+定义一个操作中的算法的框架，而将一些步骤延迟到子类中。使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。
+
+基本框架：
+AbstractClass : 抽象类，定义了一套算法框架。
+ConcreteClass：具体的实现类，可以自定义一些算法
+事例：计算机开机启动，码农的一天......
+
+设计模式开源的网站：
+https://github.com/simple-android-framework-exchange/android_design_patterns_analysis#schedule
+
+
+4.Android设计模式源码阅读 （模板设计模式）
+
+
+4.1 怎么去阅读源码：
+    什么时候要去阅读源码，带着思想去读
+    1. 为了验证某些在网上看到的一些技术文章：异步刚开会加载方法-->****方法-->最终会执行什么方法 异步加载只能调一次；
+    2.为了解决开发中的某些问题：5.0 以上和5.0以下的效果区别；
+    3.为了写某些架构性的框架：Okhttp的框架,阅读大量的源码，个人建议大家还是自己去参加一些开源的框架。
+
+
+读的时候分为：精读和细读还有泛读
+
+
+异步加载：带着疑问去读，然后思考比对我们自己写的一些好的地方,自己写类似的功能应该怎么去写？
+
+
+AsyncTask 的使用
+
+    AsyncTask task = new AsyncTask<Void,Void,Void>(){
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 执行完成返回的方法 ， UI 主线程
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            // 执行一些耗时的操作  连接网络获取数据，读取大型数据库   运行在Thread中
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+            // 一调用就会执行的方法 UI 主线程
+            super.onPreExecute();
+        }
+    };
+    // RXJava  模板的设计模式  非常符合
+    task.execute();
+    AsyncTask 源码：
+        if (mStatus != Status.PENDING) {
+            switch (mStatus) {
+                case RUNNING:
+                    throw new IllegalStateException("Cannot execute task:"
+                    + " the task is already running.");
+                case FINISHED:
+                throw new IllegalStateException("Cannot execute task:"
+                    + " the task has already been executed "
+                    + "(a task can be executed only once)");
+            }
+        }
+        AsyncTask 为什么只能执行一次的问题
+        mStatus = Status.RUNNING;
+        onPreExecute();
+        mWorker.mParams = params;
+        exec.execute(mFuture);
+        return this;
+        AsyncTask 一开始就会调用 onPreExecute然后执行FutureTask（Runnable）执行run方法 然后最终会调用 执行在线程中
+        mWorker = new WorkerRunnable<Params, Result>() {
+            public Result call() throws Exception {
+                mTaskInvoked.set(true);
+                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                //noinspection unchecked
+                Result result = doInBackground(mParams);
+                Binder.flushPendingCommands();
+                return postResult(result);
+            }
+        };
+        由此可见doInBackground(mParams);就是运行在线程中
+        private Result postResult(Result result) {
+            @SuppressWarnings("unchecked")
+            Message message = getHandler().obtainMessage(MESSAGE_POST_RESULT,
+            new AsyncTaskResult<Result>(this, result));
+            message.sendToTarget();
+            return result;
+        }
+        postResult 在线程中通过Handler的消息机制发一个消息让其切换到主线程中
+        @SuppressWarnings({"unchecked", "RawUseOfParameterizedType"})
+        @Override
+        public void handleMessage(Message msg) {
+            AsyncTaskResult<?> result = (AsyncTaskResult<?>) msg.obj;
+                switch (msg.what) {
+                    case MESSAGE_POST_RESULT:
+                        // There is only one result
+                        result.mTask.finish(result.mData[0]);
+                        break;
+                    case MESSAGE_POST_PROGRESS:
+                        result.mTask.onProgressUpdate(result.mData);
+                        break;
+                }
+        }
+
+        private void finish(Result result) {
+            if (isCancelled()) {
+                onCancelled(result);
+            } else {
+                onPostExecute(result);
+            }
+            mStatus = Status.FINISHED;
+        }
+        finish会去判断有没有取消，如果是取消了就会调用onCancelled()方法，否则就是onPostExecute() 执行在主线程中了。
+
+    最后总结：ececute()方法一调用就会去判断状态，如果状态不对就会抛异常，然后会把状态置为Running ，然后执行onPreExecute(), 开一个线程执行 doInBackground(),
+    doInBackground()执行完毕之后会利用Handler发送消息切换主线程中，然后执行onPostExecute()方法，最后把状态置为FINISHED。
+
+View绘制流程：
+
+
+简单介绍一下View的绘制流程，后面讲这个自定义View的时候去，等内涵端子讲完我就会出一起专题来扫盲，写各种效果。
+    @CallSuper
+    public void draw(Canvas canvas) {
+        final int privateFlags = mPrivateFlags;
+        final boolean dirtyOpaque = (privateFlags & PFLAG_DIRTY_MASK) == PFLAG_DIRTY_OPAQUE &&
+        (mAttachInfo == null || !mAttachInfo.mIgnoreDirtyState);
+        mPrivateFlags = (privateFlags & ~PFLAG_DIRTY_MASK) | PFLAG_DRAWN;
+        /*
+        * Draw traversal performs several drawing steps which must be executed
+        * in the appropriate order:
+        *
+        *      1. Draw the background
+        *      2. If necessary, save the canvas' layers to prepare for fading
+        *      3. Draw view's content
+        *      4. Draw children
+        *      5. If necessary, draw the fading edges and restore layers
+        *      6. Draw decorations (scrollbars for instance)
+        */
+        // Step 1, draw the background, if needed
+        int saveCount;
+        if (!dirtyOpaque) {
+            drawBackground(canvas);
+        }
+        // skip step 2 & 5 if possible (common case)
+        final int viewFlags = mViewFlags;
+        boolean horizontalEdges = (viewFlags & FADING_EDGE_HORIZONTAL) != 0;
+        boolean verticalEdges = (viewFlags & FADING_EDGE_VERTICAL) != 0;
+        if (!verticalEdges && !horizontalEdges) {
+            // Step 3, draw the content
+            if (!dirtyOpaque) onDraw(canvas);
+            // Step 4, draw the children
+            dispatchDraw(canvas);
+            // Overlay is part of the content and draws beneath Foreground
+            if (mOverlay != null && !mOverlay.isEmpty()) {
+                mOverlay.getOverlayView().dispatchDraw(canvas);
+            }
+            // Step 6, draw decorations (foreground, scrollbars)
+            onDrawForeground(canvas);
+            // we're done...
+            return;
+        }
+        .....省略drawBackground() --> onDraw() --> dispatchDraw(canvas)-->onDrawForeground(canvas);
+        自定义View 如果想在onDraw中绘制效果，如果是继承ViewGroup是没有任何效果的，因为不会调用该方法，但是可以调用dispatchDraw()，
+        继承子View的自定义控件不会有任何影响
+
+5.开发项目中的使用
+BaseActivity:
+
+
+/**
+* Email 240336124@qq.com * Created by Darren on 2017/2/12.
+* Version 1.0
+* Description: 整合应用的BaseActivity
+*/
+public abstract class BaseActivity extends AppCompatActivity{
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // 设置布局layout
+        setContentView();
+        // 一些特定的算法，子类基本都会使用的
+        ViewUtils.inject(this);
+        // 初始化头部
+        initTitle();
+        // 初始化界面
+        initView();
+        // 初始化数据
+        initData();
+    }
+    // 初始化数据
+    protected abstract void initData();
+    // 初始化界面
+    protected abstract void initView();
+    // 初始化头部
+    protected abstract void initTitle();
+    // 设置布局layout
+    protected abstract void setContentView();
+    /**
+    * 启动Activity
+    */
+    protected void startActivity(Class<?> clazz){
+        Intent intent = new Intent(this,clazz);
+        startActivity(intent);
+    }
+}
+可以把一些通用的代码封装到BaseActivity,但是是不是可以放很多呢？
+
+
+
+
+BaseSkinActivity:
+
+
+
+
+6.最后的总结和任务布置
+
+
+了解类的加载机制看源码，BaseDexClassLoader  下载没有阉割版的源码或者直接去官网上看，
+热修复给系统应用打补丁：
+                    1. 如何上传崩溃信息到服务器，
+                    2.阿里开源的解决方案  dexsposed  zygot  C C++ NDK ，
+                    3.自己的解决方案 腾讯给的解决方案Dex分包，类的加载机制
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

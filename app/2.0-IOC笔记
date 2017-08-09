@@ -1,0 +1,105 @@
+1.简介
+
+主要有Android源码阅读设计模式分析，以及第三方框架源码分析，自己手动一步步搭建仿内涵段子项目的整体
+框架......   代码最终需要审核
+
+Darren QQ群  546270670    个人  240336124
+
+       GITHub https://github.com/Shenmowen/DarrenIOC
+
+2.IOC  反射加注解
+
+每个一个小的框架会单独建一个包，其实是模仿别人写 xutils早期的第三方
+框架 viewIoc  http   dao  图片加载  思考自己怎么去实现。
+源码   xutils 和 ButterKnife
+
+3.xutils 源码阅读和使用
+
+1.// handlerType --> class  获取setContentView()方法
+2.Method setContentViewMethod = handlerType.getMethod("setContentView", int.class);
+3.// 反射执行该方法
+4.setContentViewMethod.invoke(activity, viewId);
+
+1.View view = finder.findViewById(viewInject.value(), viewInject.parentId());
+2.if (view != null) {
+3.    // 可以操作所有修饰
+      1.field.setAccessible(true);
+      2.// 反射注入属性
+      3.field.set(handler, view);
+4.}
+动态代理设计模式不详细介绍，插件开发 Hook技术 再去详细讲解
+
+属性注入 ： 利用反射去  获取Annotation --> value --> findViewById  --> 反射注入属性
+
+事件注入 ：利用反射去  获取Annotation --> value --> findViewById  -->  setOnclickListener --> 动态代理反射执行方法
+
+4.ButterKnife 源码阅读和使用
+
+1.@Retention(CLASS) @Target(FIELD)
+2.public @interface Bind {
+3.  /** View ID to which the field will be bound. */
+4.  int[] value();
+5.}
+
+@Retention(CLASS) 编译时的注解
+
+流程
+
+1.编译的时候ButterKnifeProcessor  生成 .java  --> class文件
+2.运行是viewBinder.bind(finder, target, source);
+
+相比较而言  butterKnife可能更加高效  有一个好用的插件   个人推荐butterKnife
+
+4.自己动手
+
+自己实现会增加在开发过程中的一些常用功能，网络注解。
+读源码：
+        1.使用的时候出了问题，
+        2.想自己去实现，
+        3.我想实现类似的功能。自己实现的方式跟xutils类似。
+
+5.最后扩展
+
+网络检测的问题,下周六开始写Android Studio插件,事先有时间就去了解
+
+插件开发工具
+https://www.jetbrains.com/idea/下载路径 可以在分享的云盘里面下载
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

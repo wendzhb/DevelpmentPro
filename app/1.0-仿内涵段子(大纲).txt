@@ -1,0 +1,141 @@
+Android 进阶学习
+
+
+1.仿内涵段子介绍，系统架构层级分析
+
+
+
+2.打造自己的IOC注解，butterknife第三方源码解析
+
+
+
+3.Android Studio插件介绍及Android Studio插件开发，配套自己的IOC注解  
+
+
+
+4.模板设计模式解析 - 构建整个项目的BaseActivity
+
+
+
+5.Builder设计模式解析 - 构建整个项目的NavigationBar
+
+
+
+6.更火的链式调用解析 - 打造第三方网络框架引擎
+
+
+
+7.Builder设计模式实战 - 构建万能的自定义Dialog
+
+
+
+8.如何捕捉奔溃日志上传Bug信息和手机信息上传到服务器，配套热修复使用
+
+
+
+9.第三方数据库介绍，实现自己的网络数据三级缓存
+
+
+
+10.Android Studio 模板介绍，以及自定义通用Activity模板 （Blog已有）
+
+
+
+以上就是基本工作，是为项目做的准备工作,不同的项目可能不太一样
+
+
+
+1.进程详解之打不死的小强 - 三进程守护让360手机卫士哭晕在厕所
+
+
+
+2.主页面的加载方案分析 - Fragment源码解析回退栈及状态保持 （Blog已有）
+
+
+
+3.Android无限广告轮播 - ViewPager源码分析以及Adapter设计模式解析  (Blog已有)
+
+
+
+4.Android无限广告轮播 - 自定义无限轮播的BannerView  (Blog已有)
+
+
+
+5.RecyclerView更全解析 - 基本使用及其自定义分割线 (Blog已有)
+
+
+
+6.RecyclerView更全解析 - 为它优雅的添加头部和底部  (Blog已有)
+
+
+
+7.RecyclerView更全解析 - 打造万能通用的万能Adapter (Blog已有)
+
+
+
+8.RecyclerView更全解析 - 打造通用的下拉刷新上拉加载  (Blog已有)
+
+
+
+9.打造炫酷通用的ViewPager指示器 - 玩转字体变色 （Blog已有）
+
+
+
+10.打造炫酷通用的ViewPager指示器 - Adapter模式适配所有 （Blog已有） 
+
+
+
+11.material design控件使用 - 5.0自带的下拉刷新控件SwipeRefreshLayout和FloatingActionButton 
+
+
+
+12.那些年Android评论之 - 表情趟过的那些坑
+
+
+
+13.Android 6.0不一样的处理权限 - 运行时权限处理解析  (Blog已有)
+
+
+
+14.Android 6.0使用IOC注解 - 打造自己的一套权限处理框架  (Blog已有)
+
+
+
+15.仿微信的图片和视频选择 多文件资源就该这么上传
+
+
+
+16.第三方WX QQ分享，第三方WX QQ登录详解
+
+
+
+17.Android插件化开发 - 白天黑夜一键换肤  5期的视频以上   动态代理设计模式（系统Activity的启动流程，找google的漏洞，不在AndroidManifest.xml注册activity也不会报错）
+
+
+
+18.不一样的用户体验之 - Android增量更新
+
+
+
+19.Android热修复技术流派解析 - 不更新APK也能修复Bug
+
+
+
+20.混淆打包优化之 - 如何加密资源文件，多渠道打包
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

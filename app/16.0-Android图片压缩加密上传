@@ -42,3 +42,27 @@
     5.2copy到app的jni目录下面 不光要copy .so文件 还要copy头文件.h
     5.3开始写Java层的native方法，生成头文件
     5.4把生成好的头文件也copy到C++目录下面来
+
+    生成so的方式二
+    sourceSet{
+        main{
+            jni.srcDirs=[]//设置禁止gradle生成Android.mk
+            jniLibs.srcDirs=['libs']
+        }
+    }
+    task ndkBuild(type: Exec){//设置新的so的生成目录
+        commandLine  "C:\\Users\\kaifa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\ndk-build.cmd",//NDK 的安装路径
+                "NDK_PROJECT_PATH = build/intermediates/ndk",
+                "NDK_LIBS_OUT=libs",
+                "APP_BUILD_SRCIPT=jni/Android.mk",
+                "NDK_APPLICATION_MK=jni/Application.mk"
+    }
+    tasks.withType(JavaCompile){
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+6.优化
+    Bitmap bitmap = BitmapFactory.decodeFile(s);
+    优化 bitmap decodeFile有可能会内存溢出
+    一般后台会规定尺寸     800；    微信  1280*960
+    上传的时候可能会等待    for循环   最好用线程池（2-3）
+    Bitmap 要释放，bitmap往往只有一个对象，九个最好每次都要释放

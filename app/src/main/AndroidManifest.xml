@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name="com.example.kaifa.essayjoke.BaseApplication"
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
@@ -17,16 +17,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.kaifa.essayjoke.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.kaifa.essayjoke.TestActivity"
+            android:name=".TestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.kaifa.essayjoke.SkinActivity"
+            android:name=".SkinActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.kaifa.essayjoke.WelcomeActivity"
+            android:name=".WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,16 +35,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.kaifa.essayjoke.HomeActivity"
+            android:name=".HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.kaifa.essayjoke.imageselect.SelectImageActivity"
+            android:name=".imageselect.SelectImageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.kaifa.essayjoke.ActivityCamera"
+            android:name=".ActivityCamera"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.kaifa.essayjoke.DemoSelectImageActivity"
+            android:name=".DemoSelectImageActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -305,4 +305,8 @@ public class MainActivity extends BaseSkinActivity {
     private void btnImageSelectClick(Button btnImageSelect) {
         startActivity(DemoSelectImageActivity.class);
     }
+
+    public void plugin(View view) {
+        startActivity(PluginActivity.class);
+    }
 }

@@ -195,3 +195,37 @@ Java_com_example_kaifa_essayjoke_DemoSelectImageActivity_stringFromJNI(JNIEnv *e
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
 }
+
+// 加密的秘钥
+char password[] = "Big god take me fly!";
+
+// 加密文件
+void crypt_file(char *normal_path, char *crypt_path) {
+    //打开文件
+    FILE *normal_fp = fopen(normal_path, "rb");
+    FILE *crypt_fp = fopen(crypt_path, "wb");
+    //一次读取一个字符
+    int ch;
+    int i = 0; //循环使用密码中的字母进行异或运算
+    int pwd_len = strlen(password); //密码的长度
+    while ((ch = fgetc(normal_fp)) != EOF) { //End of File
+        //写入（异或运算）
+        fputc(ch ^ password[i % pwd_len], crypt_fp);
+        i++;
+    }
+    // 关闭
+    fclose(crypt_fp);
+    fclose(normal_fp);
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_kaifa_essayjoke_ImageUtil_cryptFile(JNIEnv *env, jclass type, jstring filePath_,
+                                                     jstring cryptPath_) {
+    char *filePath = (char *) env->GetStringUTFChars(filePath_, 0);
+    char *cryptPath = (char *) env->GetStringUTFChars(cryptPath_, 0);
+
+    crypt_file(filePath, cryptPath);
+}
+
+
+

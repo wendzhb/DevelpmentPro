@@ -1,6 +1,7 @@
 package com.example.kaifa.essayjoke;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.alex.framelibrary.navigationbar.DefaultNavigationBar;
 import com.example.kaifa.essayjoke.imageselect.ImageSelector;
@@ -18,6 +20,7 @@ import com.zhbstudy.baselibrary.ioc.ViewById;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class DemoSelectImageActivity extends BaseActivity {
 
@@ -77,13 +80,21 @@ public class DemoSelectImageActivity extends BaseActivity {
     }
 
     public void comparess(View view) {
-        for (String s : mImageList) {
-            ImageUtil.compressBitmap(BitmapFactory.decodeFile(mImageList.get(0)), 30,
+        // 采用Iterator的原因是for是线程不安全的，迭代器是线程安全的
+//        for (String path : mImageList) {
+        ListIterator<String> iterator = mImageList.listIterator();
+        while(iterator.hasNext()){
+            String path = iterator.next();
+            //优化 bitmap decodeFile有可能会内存溢出
+            //一般后台会规定尺寸     800；    微信  1280*960
+            //Bitmap bitmap = BitmapFactory.decodeFile(s);
+            //上传的时候可能会等待    for循环   最好用线程池（2-3）
+            Bitmap bitmap = ImageUtil.decodeFile(path);
+            ImageUtil.compressBitmap(bitmap, 50,
                     Environment.getExternalStorageDirectory().getAbsolutePath() +
-                            File.separator + new File(s).getName());
-
+                            File.separator + new File(path).getName());
         }
-
+        Toast.makeText(this, "压缩完成", Toast.LENGTH_SHORT).show();
     }
 
     /**

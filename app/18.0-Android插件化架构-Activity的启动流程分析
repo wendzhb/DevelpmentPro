@@ -1,0 +1,14 @@
+1.activity启动流程（插件化）
+    运用动态代理，做到activity没有在Androidmanifest.xml中配置依然不报错
+
+    阅读源码的思路：
+    1.1.解决什么问题
+    1.2.学习源码的思想
+    1.3.有些代码跳过，发现跑偏了再回来
+    1.4.先大概读一下流程，抓细节（怎么开启任务栈以及管理任务栈，启动模式怎么处理的，activity实力怎么创建的，activity的生命周期怎么管理的）
+
+    A->B 解析activity，做了一些错误的校验，启动模式singtop,singtask,A的onPause（）方法， B利用反射创建activity实例，
+    创建context，attch数据，oncreate() onstart() onresume()
+
+1.Hook IActivityManager  代理activity过去
+2.ActivityThread handleRelaunchActivity 创建要换回来

@@ -307,6 +307,7 @@ public class MainActivity extends BaseSkinActivity {
     }
 
     public void plugin(View view) {
+
         startActivity(PluginActivity.class);
     }
 }

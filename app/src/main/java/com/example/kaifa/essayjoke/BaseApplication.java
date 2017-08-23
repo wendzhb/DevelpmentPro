@@ -22,6 +22,7 @@ public class BaseApplication extends LitePalApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
         //设置全局异常捕捉类
         ExceptionCrashHandler.getInstance().init(this);
 
@@ -47,6 +48,14 @@ public class BaseApplication extends LitePalApplication {
             FixDexManager fixDexManager = new FixDexManager(this);
             //加载所有修复的dex包
             fixDexManager.loadFixDex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HookStartActivityUtil hookStartActivityUtil = new HookStartActivityUtil(this, ProxyActivity.class);
+        try {
+            hookStartActivityUtil.hookStartActivity();
+            hookStartActivityUtil.hookLaunchActivity();
         } catch (Exception e) {
             e.printStackTrace();
         }

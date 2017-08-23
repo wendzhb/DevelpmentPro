@@ -1,0 +1,21 @@
+1.继承自AppCompateActivity绕不过去的问题
+
+    public static IPackageManager getPackageManager() {
+        //每一次获取 IPackageManager 先做一次判断sPackageManager是不是等于空
+        if (sPackageManager != null) {
+            //Slog.v("PackageManager", "returning cur default = " + sPackageManager);
+            return sPackageManager;
+        }
+        IBinder b = ServiceManager.getService("package");
+        //Slog.v("PackageManager", "default service binder = " + b);
+        sPackageManager = IPackageManager.Stub.asInterface(b);
+        //Slog.v("PackageManager", "default service = " + sPackageManager);
+        return sPackageManager;
+    }
+
+    静态方法每一次都先调用一次方法，sPackageManager就会有实例，那么我再次进来获取的就是已经实例好的sPackageManager
+
+2.启动插件
+    热修复的代码
+
+3.插件问题：资源问题，两个界面一模一样

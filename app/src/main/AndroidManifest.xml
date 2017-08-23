@@ -46,6 +46,7 @@
         <activity
             android:name=".DemoSelectImageActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ProxyActivity"></activity>
     </application>
 
 </manifest>

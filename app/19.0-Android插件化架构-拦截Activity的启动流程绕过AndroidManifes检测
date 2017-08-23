@@ -1,0 +1,17 @@
+1.简介：点击按钮，去服务器上下载一个功能apk，保存在本地，没有运行是单独的，我们要把它启动起来，并且做到参数传递
+    1.启动，启动的一个activity，这个插件activity是没有被注册的
+    2.类需要加载，插件的activity的类是在插件中
+    3.还需要加载资源
+
+2.基于代理设计模式，activity的启动流程
+
+3.拦截启动：
+    进入我的方法，现在真正执行的类其实是Singleton里面的mInstance属性
+    3.1获取ActivityManagerNative里面的gDefault
+    3.2获取gDefault中的mInstance属性
+
+    3.3报错是因为PluginActivity没注册，用一个注册的Activity占坑，待会会让ProxyActivity去过安检
+    3.4换回来 hook ActivityManager里面的mH是一个Handler
+    3.4.1获取activityThread实例
+    3.4.2获取activityThread中的mH
+    3.4.3hook handleLaunchActivity

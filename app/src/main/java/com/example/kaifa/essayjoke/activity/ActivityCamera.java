@@ -1,4 +1,4 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.example.kaifa.essayjoke.R;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 
 import java.io.ByteArrayOutputStream;

@@ -1,4 +1,4 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.kaifa.essayjoke.R;
 import com.example.kaifa.essayjoke.plugin.PluginManager;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 

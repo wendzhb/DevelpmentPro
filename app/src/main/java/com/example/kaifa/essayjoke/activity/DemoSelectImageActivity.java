@@ -1,8 +1,7 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +11,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.alex.framelibrary.navigationbar.DefaultNavigationBar;
+import com.example.kaifa.essayjoke.R;
+import com.example.kaifa.essayjoke.adapter.RecycleAdapter;
 import com.example.kaifa.essayjoke.imageselect.ImageSelector;
 import com.example.kaifa.essayjoke.imageselect.SelectImageActivity;
+import com.example.kaifa.essayjoke.utils.ImageUtil;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 import com.zhbstudy.baselibrary.ioc.OnClick;
 import com.zhbstudy.baselibrary.ioc.ViewById;

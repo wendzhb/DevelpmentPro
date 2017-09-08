@@ -1,4 +1,4 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.alex.framelibrary.navigationbar.DefaultNavigationBar;
 import com.example.alex.framelibrary.skin.BaseSkinActivity;
+import com.example.kaifa.essayjoke.R;
 import com.zhbstudy.baselibrary.crash.ExceptionCrashHandler;
 import com.zhbstudy.baselibrary.fixBug.FixDexManager;
 import com.zhbstudy.baselibrary.ioc.CheckNet;
@@ -309,5 +310,9 @@ public class MainActivity extends BaseSkinActivity {
     public void plugin(View view) {
 
         startActivity(PluginActivity.class);
+    }
+
+    public void updata(View view) {
+        startActivity(ZLGXActivity.class);
     }
 }

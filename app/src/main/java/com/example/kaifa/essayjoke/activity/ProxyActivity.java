@@ -1,7 +1,8 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.os.Bundle;
 
+import com.example.kaifa.essayjoke.R;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 
 public class ProxyActivity extends BaseActivity {

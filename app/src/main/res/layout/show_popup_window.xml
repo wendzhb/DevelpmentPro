@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rel_select"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_pop_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="#301616"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:id="@+id/timePicker1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.example.kaifa.essayjoke.datetimedialog.WheelView
+            android:id="@+id/year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.DashedLineView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/dotted_line"
+            android:gravity="center_vertical" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.WheelView
+            android:id="@+id/month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.DashedLineView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/dotted_line"
+            android:gravity="center_vertical" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.WheelView
+            android:id="@+id/day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.DashedLineView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/dotted_line" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.WheelView
+            android:id="@+id/hour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.DashedLineView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/dotted_line" />
+
+        <com.example.kaifa.essayjoke.datetimedialog.WheelView
+            android:id="@+id/mins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_ensure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="确定"
+            android:textColor="@color/black_50_opacity"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_cancle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="取消"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.content.Intent;
 import android.os.Environment;
@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.alex.framelibrary.skin.BaseSkinActivity;
 import com.example.alex.framelibrary.skin.SkinManager;
 import com.example.alex.framelibrary.skin.SkinResource;
+import com.example.kaifa.essayjoke.R;
 import com.zhbstudy.baselibrary.ioc.OnClick;
 import com.zhbstudy.baselibrary.ioc.ViewById;
 

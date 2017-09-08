@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <TextView
         android:id="@+id/tv"
@@ -47,12 +47,22 @@
         android:textColor="@color/colorPrimary" />
 
     <Button
+        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/account_account_action_selected"
-        android:text="插件化架构"
         android:onClick="plugin"
+        android:text="插件化架构"
+        android:textColor="@color/colorPrimary" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/account_account_action_selected"
+        android:onClick="updata"
+        android:text="增量更新~~~~~~~~"
         android:textColor="@color/colorPrimary" />
 
     <EditText

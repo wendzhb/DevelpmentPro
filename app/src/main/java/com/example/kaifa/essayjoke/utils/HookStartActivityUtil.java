@@ -1,11 +1,10 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.utils;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.util.Log;
 
 import java.lang.reflect.Field;

@@ -1,4 +1,4 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.util.Log;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.example.alex.framelibrary.http.HttpCallBack;
 import com.example.alex.framelibrary.http.OkHttpEngine;
+import com.example.kaifa.essayjoke.R;
 import com.example.kaifa.essayjoke.model.DiscoverListResult;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 import com.zhbstudy.baselibrary.dialog.MyAlertDialog;

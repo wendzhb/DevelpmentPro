@@ -226,6 +226,3 @@ Java_com_example_kaifa_essayjoke_ImageUtil_cryptFile(JNIEnv *env, jclass type, j
 
     crypt_file(filePath, cryptPath);
 }
-
-
-

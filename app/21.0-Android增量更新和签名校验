@@ -1,0 +1,74 @@
+1.一步一步来实现
+    跟新版本的套路，直接去后台下载最新版本（流量，等待）。
+
+    增量跟新，算法核心其实比较两个文件的不同生成差分包。
+    流程大致就是：服务端生成差分包，客户端下载差分包进行合并生成新的apk版本，然后安装
+
+ 1.1写Java的native方法
+ 1.2生成头文件，
+    rebuild一次生成class文件
+    cd进入项目的F:\ZHB_Pro\EssayJoke-CMake\app\build\intermediates\classes\debug
+    生成头文件命令
+    ||javah com.example.kaifa.essayjoke.utils.PatchUtils
+    ||javah -classpath . -jni com.example.kaifa.essayjoke.utils.PatchUtils
+    copy头文件到jni目录下面
+ 1.3下载第三方的c库
+    下载第三方提供好的C库，增量更新bsdiff,依赖bzlib
+    下载bzlip后解压，只留下 .h和.c文件
+
+ 1.4配置环境
+    把下面的内容拷贝到build.gradle里面
+    sourceSets{
+        main{
+            jni.srcDirs=[]//设置禁止gradle生成Android.mk
+            jniLibs.srcDirs=['libs']
+        }
+    }
+    task ndkBuild(type: Exec){//设置新的so的生成目录
+        commandLine  "C:\\Users\\kaifa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\ndk-build.cmd",//NDK 的安装路径
+                "NDK_PROJECT_PATH = build/intermediates/ndk",
+                "NDK_LIBS_OUT=libs",
+                "APP_BUILD_SCRIPT=jni/Android.mk",
+                "NDK_APPLICATION_MK=jni/Application.mk"
+    }
+    tasks.withType(JavaCompile){
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+
+    在总的目录下面的gradle.properties文件加上一句话
+    android.useDeprecatedNdk = true
+
+    Android.mk如下
+    LOCAL_PATH := $(call my-dir)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE    :=bspatch
+    LOCAL_SRC_FILES :=bspatch.c
+    LOCAL_LDLIBS    :=-ljnigraphics -llog
+    include $(BUILD_SHARED_LIBRARY)
+
+    运行一次，能够启动代表整合第三方的C库文件没有问题了
+
+ 1.5合并方法的实现
+    首先大致阅读搞清一下方法的参数，才能调用
+
+2.服务器生成差分包，供app下载，写好dll动态库
+ 2.1下载https://github.com/curasystems/bsdiff-win
+    Java->C语言
+ 2.2新建Java工程编写native方法
+ 2.3生成头文件，cmd命令
+ 2.4生成dll动态库 供Java调用，必须借用VS 2013 新建VS工程
+ 2.5把下载后的win-C库文件拷贝到VS工程目录
+ 2.6在VS添加头文件和源文件
+ 2.7运行一下
+    #define _CRT_SECURE_NO_WARNINGS
+    -D _CRT_SECURE_NO_WARNINGS -D _CRT_NONSTDC_NO_DEPRECATE
+        过时的函数                   不安全的函数
+ 2.8解决完错误以后生成dll动态库 没报错代表整合第三方的C库是没问题的
+ 2.9把头文件copy进VS工程目录 在VS添加头文件和源文件
+ 3.0jni.h找不到，去java安装目录下面搜索
+ 3.1写生成差分包的实现方式，手写阅读main方法，然后调用C方法
+ 3.2在Java文件中调用生成好的dll动态库
+
+3.签名校验
+第一步去网上找系统应用的所有源码，因为应用安装其实是系统的系统的activity完成的，它会去校验签名，仿照获取就行，考虑
+反射的运用

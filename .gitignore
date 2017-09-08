@@ -8,3 +8,8 @@
 /captures
 .externalNativeBuild
 /.idea/
+baselibrary/libs/
+baselibrary/src/main/res/drawable/
+framelibrary/libs/
+framelibrary/src/androidTest/java/com/example/alex/framelibrary/db/
+javaproxy/libs/

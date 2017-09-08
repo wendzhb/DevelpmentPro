@@ -1,9 +1,10 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 
 import com.example.alex.framelibrary.skin.BaseSkinActivity;
+import com.example.kaifa.essayjoke.R;
 
 public class WelcomeActivity extends BaseSkinActivity {
 

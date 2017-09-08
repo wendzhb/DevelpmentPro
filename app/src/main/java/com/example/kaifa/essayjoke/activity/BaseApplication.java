@@ -1,8 +1,9 @@
-package com.example.kaifa.essayjoke;
+package com.example.kaifa.essayjoke.activity;
 
 import com.alipay.euler.andfix.patch.PatchManager;
 import com.example.alex.framelibrary.http.OkHttpEngine;
 import com.example.alex.framelibrary.skin.SkinManager;
+import com.example.kaifa.essayjoke.utils.HookStartActivityUtil;
 import com.zhbstudy.baselibrary.crash.ExceptionCrashHandler;
 import com.zhbstudy.baselibrary.fixBug.FixDexManager;
 import com.zhbstudy.baselibrary.http.HttpUtils;

@@ -24,8 +24,8 @@ include_directories(src/main/cpp/jpeg)
 #外部导入jpeg这个库
 add_library(jpeg SHARED IMPORTED)
 #这句话是jpeg对应的so文件,so文件是放到ibs这个文件夹中(相对与cpp这个文件的位置)
-#set_target_properties(jpeg PROPERTIES IMPORTED_LOCATION ../../../../libs/${ANDROID_ABI}/libjpeg.so)
-set_target_properties(jpeg PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/libs/armeabi/libjpeg.so)
+set_target_properties(jpeg PROPERTIES IMPORTED_LOCATION ../../../../libs/${ANDROID_ABI}/libjpeg.so)
+#set_target_properties(jpeg PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/libs/armeabi/libjpeg.so)
 
 
 # Searches for a specified prebuilt library and stores the path as a

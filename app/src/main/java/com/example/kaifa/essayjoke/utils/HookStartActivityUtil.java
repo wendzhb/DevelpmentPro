@@ -140,18 +140,19 @@ public class HookStartActivityUtil {
             if (method.getName().equals("startActivity")) {
                 //1.首先获取原来的Intent
                 Intent originIntent = (Intent) args[2];
-                //2.创建一个安全的
-                Intent safeIntent = new Intent(mContext, mProxyClass);
-                args[2] = safeIntent;
-                //绑定原来的intent
-                safeIntent.putExtra(EXTRA_ORIGIN_INTENT, originIntent);
-
+                if (originIntent.getComponent() != null) {
+                    //2.创建一个安全的
+                    Intent safeIntent = new Intent(mContext, mProxyClass);
+                    args[2] = safeIntent;
+                    //绑定原来的intent
+                    safeIntent.putExtra(EXTRA_ORIGIN_INTENT, originIntent);
+                }
             }
             return method.invoke(mObject, args);
         }
     }
 
-    private class PackageManagerHandler implements InvocationHandler{
+    private class PackageManagerHandler implements InvocationHandler {
 
         private Object mActivityManagerObject;
 
@@ -161,11 +162,11 @@ public class HookStartActivityUtil {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (method.getName().startsWith("getActivityInfo")){
+            if (method.getName().startsWith("getActivityInfo")) {
                 ComponentName componentName = new ComponentName(mContext, mProxyClass);
                 args[0] = componentName;
             }
-            return method.invoke(mActivityManagerObject,args);
+            return method.invoke(mActivityManagerObject, args);
         }
     }
 

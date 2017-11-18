@@ -118,7 +118,7 @@ int generateJPEG(BYTE *data, int w, int h, int quality,
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_kaifa_essayjoke_ImageUtil_compressBitmap(JNIEnv *env, jclass type, jobject bitmap,
+Java_com_example_kaifa_essayjoke_utils_ImageUtil_compressBitmap(JNIEnv *env, jclass type, jobject bitmap,
                                                           jint quality, jstring fileName_) {
     // 1.获取Bitmap信息
     AndroidBitmapInfo android_bitmap_info;
@@ -189,7 +189,7 @@ Java_com_example_kaifa_essayjoke_ImageUtil_compressBitmap(JNIEnv *env, jclass ty
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_kaifa_essayjoke_DemoSelectImageActivity_stringFromJNI(JNIEnv *env,
+Java_com_example_kaifa_essayjoke_activity_DemoSelectImageActivity_stringFromJNI(JNIEnv *env,
                                                                        jobject instance) {
 
     std::string hello = "Hello from C++";

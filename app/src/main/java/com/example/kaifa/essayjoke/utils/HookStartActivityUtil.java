@@ -140,7 +140,7 @@ public class HookStartActivityUtil {
             if (method.getName().equals("startActivity")) {
                 //1.首先获取原来的Intent
                 Intent originIntent = (Intent) args[2];
-                if (originIntent.getComponent() != null) {
+                if (originIntent.getComponent() != null) {//不拦截系统界面
                     //2.创建一个安全的
                     Intent safeIntent = new Intent(mContext, mProxyClass);
                     args[2] = safeIntent;

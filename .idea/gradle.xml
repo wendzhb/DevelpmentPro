@@ -11,6 +11,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/baselibrary" />
             <option value="$PROJECT_DIR$/framelibrary" />
+            <option value="$PROJECT_DIR$/javaproxy" />
+            <option value="$PROJECT_DIR$/network" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

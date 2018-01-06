@@ -315,4 +315,8 @@ public class MainActivity extends BaseSkinActivity {
     public void updata(View view) {
         startActivity(ZLGXActivity.class);
     }
+
+    public void finger(View view) {
+        startActivity(FingerprintActivity.class);
+    }
 }

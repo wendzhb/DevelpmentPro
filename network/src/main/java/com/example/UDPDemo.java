@@ -11,7 +11,7 @@ import java.net.InetAddress;
  * Created by zhb on 2017/11/18.
  */
 
-public class UDODemo {
+public class UDPDemo {
 
     static class UDPServer {
         public static void main(String[] args) throws IOException {

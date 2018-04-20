@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:src="@mipmap/windmill" />
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:layout_width="match_parent"
@@ -59,7 +59,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_centerHorizontal="true"
         android:layout_weight="2"
-        android:background="@drawable/blow_btn_style" />
+        android:background="@drawable/ic_back_normal" />
 
 
 </RelativeLayout>

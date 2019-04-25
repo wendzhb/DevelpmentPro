@@ -15,4 +15,8 @@ public class Man implements IBank {
     public void loseBank() {
         System.out.println("挂失");
     }
+
+    public static void main(String[] args) {
+        Client client = new Client();
+    }
 }

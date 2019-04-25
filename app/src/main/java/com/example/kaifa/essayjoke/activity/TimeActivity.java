@@ -6,14 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kaifa.essayjoke.R;
 import com.example.kaifa.essayjoke.datetimedialog.DateUtils;
 import com.example.kaifa.essayjoke.datetimedialog.JudgeDate;
 import com.example.kaifa.essayjoke.datetimedialog.ScreenInfo;
 import com.example.kaifa.essayjoke.datetimedialog.WheelMain;
+import com.example.kaifa.essayjoke.model.MessageEvent;
+import com.example.kaifa.essayjoke.model.Person;
 import com.example.kaifa.essayjoke.view.DatePickerDialog;
 import com.zhbstudy.baselibrary.base.BaseActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,16 +32,14 @@ public class TimeActivity extends BaseActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time);
-    }
-
-    @Override
     protected void initData() {
         df = new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
         calendar = Calendar.getInstance(Locale.CHINA);
         fmtDate = new SimpleDateFormat("yyyy-MM-dd");
+
+        showTiemDialog();
+
+        startActivity(TestActivity.class);
     }
 
     @Override
@@ -49,7 +54,23 @@ public class TimeActivity extends BaseActivity {
 
     @Override
     protected void setContentView() {
+        setContentView(R.layout.activity_time);
+        EventBus.getDefault().register(this);
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(MessageEvent messageEvent) {
+        Toast.makeText(this, messageEvent.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     private SimpleDateFormat df;

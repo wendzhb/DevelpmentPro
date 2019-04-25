@@ -1,5 +1,6 @@
 package com.example.alex.framelibrary.http;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -15,6 +16,8 @@ import java.util.Map;
  * Descripte:
  */
 public abstract class HttpCallBack<T> implements EngineCallBack {
+
+    private Context mContext;
 
     @Override
     public void onPreExecute(Context context, Map<String, Object> params) {
@@ -39,12 +42,19 @@ public abstract class HttpCallBack<T> implements EngineCallBack {
     }
 
     @Override
-    public void onSuccess(String result) {
+    public void onSuccess(final String result) {
         //result --> 对象     转换成可操作的对象
-        Log.e("tag", "onSuccess");
-        Gson gson = new Gson();
-        T objResult = (T) gson.fromJson(result, HttpUtils.analysisClazzInfo(this));
-        onSuccess(objResult);
+
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("tag", "onSuccess");
+                Gson gson = new Gson();
+                T objResult = (T) gson.fromJson(result, HttpUtils.analysisClazzInfo(this));
+                onSuccess(objResult);
+            }
+        });
+
     }
 
     //返回可以直接操作的对象

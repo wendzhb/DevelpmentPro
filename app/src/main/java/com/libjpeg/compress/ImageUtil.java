@@ -1,4 +1,4 @@
-package com.example.kaifa.essayjoke.utils;
+package com.libjpeg.compress;
 
 
 import android.graphics.Bitmap;

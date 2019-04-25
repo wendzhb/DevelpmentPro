@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
@@ -33,7 +34,7 @@ import java.util.List;
  * 相机界面
  * Created by zhb on 2015/11/11.
  */
-public class ActivityCamera extends BaseActivity implements SurfaceHolder.Callback, Camera.PictureCallback, View.OnClickListener {
+public class ActivityCamera extends BaseActivity implements SurfaceHolder.Callback, Camera.PictureCallback, View.OnClickListener, Camera.PreviewCallback {
 
     public static final String TAG = "ActivityCamera";
 
@@ -135,6 +136,7 @@ public class ActivityCamera extends BaseActivity implements SurfaceHolder.Callba
             }
             camera = Camera.open(CammeraIndex);// 打开摄像头
             camera.setPreviewDisplay(holder); // 设置用于显示拍照影像的SurfaceHolder对象
+            camera.setPreviewCallback(this);
             camera.setDisplayOrientation(90);
             camera.startPreview(); // 开始预览
         } catch (Exception e) {
@@ -422,5 +424,10 @@ public class ActivityCamera extends BaseActivity implements SurfaceHolder.Callba
                 break;
         }
         return degree;
+    }
+
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+
     }
 }

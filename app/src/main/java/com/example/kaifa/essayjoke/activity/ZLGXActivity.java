@@ -15,6 +15,7 @@ import com.zhbstudy.baselibrary.base.BaseActivity;
 import org.reactivestreams.Subscriber;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -52,9 +53,9 @@ public class ZLGXActivity extends BaseSkinActivity {
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        startActivity(intent);
 
-        Observable observable = Observable.create(new ObservableOnSubscribe() {
+        Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void subscribe(ObservableEmitter emitter) throws Exception {
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
 
                 //3.下载完差分包之后，调用我们的方法去合并生成新版本的apk
                 //是一个耗时操作---开线程+handler，asynctask,rxjava

@@ -16,6 +16,10 @@ public class SocketServer extends WebSocketServer{
 
     public static void main(String[] args) {
         SocketServer server = new SocketServer(PORT);
+        server.getAddress().getAddress().toString();
+        server.getAddress().getHostName();
+        server.getAddress().getHostString();
+        server.getAddress().getPort();
         server.start();
 
         try {

@@ -8,9 +8,12 @@ import com.example.alex.framelibrary.http.HttpCallBack;
 import com.example.alex.framelibrary.http.OkHttpEngine;
 import com.example.kaifa.essayjoke.R;
 import com.example.kaifa.essayjoke.model.DiscoverListResult;
+import com.example.kaifa.essayjoke.model.MessageEvent;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 import com.zhbstudy.baselibrary.dialog.MyAlertDialog;
 import com.zhbstudy.baselibrary.http.HttpUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class TestActivity extends BaseActivity {
 
@@ -74,6 +77,7 @@ public class TestActivity extends BaseActivity {
 
                     @Override
                     public void onSuccess(DiscoverListResult result) {
+                        if (result!=null)
                         Log.e("tag", result.getMessage() + result.getData().getCategories().getName());
                         //没有缓存， 有了数据库 以及网络引擎
 
@@ -82,7 +86,7 @@ public class TestActivity extends BaseActivity {
 
                 });
 
-
+        EventBus.getDefault().post(new MessageEvent("event bus"));
     }
 
     @Override

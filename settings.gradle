@@ -1,1 +1,1 @@
-include ':app', ':baselibrary', ':framelibrary', ':javaproxy', ':network', ':JavaWebSocketlib'
+include ':app', ':baselibrary', ':framelibrary', ':javaproxy', ':network', ':JavaWebSocketlib', ':TestDemo'

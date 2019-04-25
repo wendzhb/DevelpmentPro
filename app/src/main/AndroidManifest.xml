@@ -20,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.BitmapLurcacheActivity"></activity>
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait" />
@@ -57,8 +58,10 @@
         <activity
             android:name=".activity.ActivityBlow"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".activity.WebSocketActivity"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.WebSocketActivity" />
+        <activity android:name=".imageselect.PreviewActivity" />
+        <activity android:name=".activity.HandleThreadActivity" />
     </application>
 
 </manifest>

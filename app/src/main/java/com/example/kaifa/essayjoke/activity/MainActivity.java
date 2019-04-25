@@ -445,4 +445,16 @@ public class MainActivity extends BaseSkinActivity {
     public void finger(View view) {
         startActivity(FingerprintActivity.class);
     }
+
+    public void time(View view) {
+        startActivity(TimeActivity.class);
+    }
+
+    public void handlethread(View view) {
+        startActivity(HandleThreadActivity.class);
+    }
+
+    public void lurcache(View view) {
+        startActivity(BitmapLurcacheActivity.class);
+    }
 }

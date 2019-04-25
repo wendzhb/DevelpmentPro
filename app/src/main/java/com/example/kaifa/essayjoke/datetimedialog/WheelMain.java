@@ -136,7 +136,7 @@ public class WheelMain {
 		if (hasSelectTime){
 			textSize = (screenheight / 140) * 4;
 		}else{
-			textSize = (screenheight / 140) * 4;
+			textSize = (screenheight / 140) ;
 		}
 		wv_day.TEXT_SIZE = textSize;
 		wv_month.TEXT_SIZE = textSize;

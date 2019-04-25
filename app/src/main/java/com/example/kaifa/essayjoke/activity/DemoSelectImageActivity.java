@@ -15,7 +15,7 @@ import com.example.kaifa.essayjoke.R;
 import com.example.kaifa.essayjoke.adapter.RecycleAdapter;
 import com.example.kaifa.essayjoke.imageselect.ImageSelector;
 import com.example.kaifa.essayjoke.imageselect.SelectImageActivity;
-import com.example.kaifa.essayjoke.utils.ImageUtil;
+import com.libjpeg.compress.ImageUtil;
 import com.zhbstudy.baselibrary.base.BaseActivity;
 import com.zhbstudy.baselibrary.ioc.OnClick;
 import com.zhbstudy.baselibrary.ioc.ViewById;
@@ -46,7 +46,6 @@ public class DemoSelectImageActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mSure.setText(stringFromJNI());
     }
 
     @Override
@@ -97,16 +96,5 @@ public class DemoSelectImageActivity extends BaseActivity {
                             File.separator + new File(path).getName());
         }
         Toast.makeText(this, "压缩完成", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
     }
 }

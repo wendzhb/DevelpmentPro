@@ -118,7 +118,7 @@ int generateJPEG(BYTE *data, int w, int h, int quality,
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_kaifa_essayjoke_utils_ImageUtil_compressBitmap(JNIEnv *env, jclass type, jobject bitmap,
+Java_com_libjpeg_compress_ImageUtil_compressBitmap(JNIEnv *env, jclass type, jobject bitmap,
                                                           jint quality, jstring fileName_) {
     // 1.获取Bitmap信息
     AndroidBitmapInfo android_bitmap_info;
@@ -187,15 +187,6 @@ Java_com_example_kaifa_essayjoke_utils_ImageUtil_compressBitmap(JNIEnv *env, jcl
     return 1;
 }
 
-extern "C"
-JNIEXPORT jstring JNICALL
-Java_com_example_kaifa_essayjoke_activity_DemoSelectImageActivity_stringFromJNI(JNIEnv *env,
-                                                                       jobject instance) {
-
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}
-
 // 加密的秘钥
 char password[] = "Big god take me fly!";
 
@@ -219,10 +210,13 @@ void crypt_file(char *normal_path, char *crypt_path) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_kaifa_essayjoke_ImageUtil_cryptFile(JNIEnv *env, jclass type, jstring filePath_,
+Java_com_libjpeg_compress_ImageUtil_cryptFile(JNIEnv *env, jclass type, jstring filePath_,
                                                      jstring cryptPath_) {
     char *filePath = (char *) env->GetStringUTFChars(filePath_, 0);
     char *cryptPath = (char *) env->GetStringUTFChars(cryptPath_, 0);
 
     crypt_file(filePath, cryptPath);
+
+    env->ReleaseStringUTFChars(filePath_, filePath);
+    env->ReleaseStringUTFChars(cryptPath_, cryptPath);
 }

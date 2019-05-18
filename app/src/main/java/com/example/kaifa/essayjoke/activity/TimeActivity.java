@@ -57,6 +57,14 @@ public class TimeActivity extends BaseActivity {
         setContentView(R.layout.activity_time);
         EventBus.getDefault().register(this);
 
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+
+        thread.start();
     }
 
 

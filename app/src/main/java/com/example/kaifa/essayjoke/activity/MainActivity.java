@@ -17,6 +17,7 @@ import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.encode.AesMd5Encode;
 import com.example.alex.framelibrary.navigationbar.DefaultNavigationBar;
 import com.example.alex.framelibrary.skin.BaseSkinActivity;
 import com.example.kaifa.essayjoke.R;
@@ -44,6 +46,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
 
@@ -157,6 +161,44 @@ public class MainActivity extends BaseSkinActivity {
         //监视地理位置变化
         mlocationmanager.requestLocationUpdates(locationProvider, 3000, 1, locationListener);
 
+        String origin = "122121无法获1234取当前位dfsfdsfs置多岁的框架sds";
+        String md5 = AesMd5Encode.getMd5(origin);
+        String md51 = getMD5(origin);
+        System.out.println("md5:" + md5 + "\n\rmd51:" + md51);
+
+
+        String s = AesMd5Encode.Base64Encode(origin);
+        String s1 = Base64.encodeToString(origin.getBytes(), Base64.DEFAULT);
+
+        String s2 = AesMd5Encode.Base64Decode(s);
+        System.out.println("AesMd5Encode.Base64Encode:" + s + "\n\rBase64:" + s1 + "\n\rAesMd5Encode.Base64Decode:" + s2);
+
+        String s3 = AesMd5Encode.AesEncode(origin);
+        String s4 = AesMd5Encode.AesDecode(s3);
+        System.out.println("AesMd5Encode.AesEncode:" + s3 + "\n\rAesMd5Encode.AesDecode:" + s4);
+
+    }
+
+    public static String getMD5(String val) {
+        try {
+            MessageDigest bmd5 = MessageDigest.getInstance("MD5");
+            bmd5.update(val.getBytes());
+            int i;
+            StringBuffer buf = new StringBuffer();
+            byte[] b = bmd5.digest();
+            for (int offset = 0; offset < b.length; offset++) {
+                i = b[offset];
+                if (i < 0)
+                    i += 256;
+                if (i < 16)
+                    buf.append("0");
+                buf.append(Integer.toHexString(i));
+            }
+            return buf.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private void updateWithNewLocation(Location location) {

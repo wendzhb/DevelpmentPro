@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <time.h>
 #include <string>
+#include "md5/MD5.h"
+
 //统一编译方式
 extern "C" {
 #include "jpeg/jpeglib.h"
@@ -20,7 +22,11 @@ extern "C" {
 #include "jpeg/config.h"
 #include "jpeg/jinclude.h"
 #include "jpeg/jmorecfg.h"
+#include "base64/base64.h"
 }
+
+#include "aes/aes256.h"
+
 
 // log打印
 #define LOG_TAG "jni"
@@ -119,7 +125,7 @@ int generateJPEG(BYTE *data, int w, int h, int quality,
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_libjpeg_compress_ImageUtil_compressBitmap(JNIEnv *env, jclass type, jobject bitmap,
-                                                          jint quality, jstring fileName_) {
+                                                   jint quality, jstring fileName_) {
     // 1.获取Bitmap信息
     AndroidBitmapInfo android_bitmap_info;
     AndroidBitmap_getInfo(env, bitmap, &android_bitmap_info);
@@ -209,9 +215,10 @@ void crypt_file(char *normal_path, char *crypt_path) {
     fclose(normal_fp);
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_libjpeg_compress_ImageUtil_cryptFile(JNIEnv *env, jclass type, jstring filePath_,
-                                                     jstring cryptPath_) {
+                                              jstring cryptPath_) {
     char *filePath = (char *) env->GetStringUTFChars(filePath_, 0);
     char *cryptPath = (char *) env->GetStringUTFChars(cryptPath_, 0);
 
@@ -219,4 +226,154 @@ Java_com_libjpeg_compress_ImageUtil_cryptFile(JNIEnv *env, jclass type, jstring 
 
     env->ReleaseStringUTFChars(filePath_, filePath);
     env->ReleaseStringUTFChars(cryptPath_, cryptPath);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_encode_AesMd5Encode_getMd5(JNIEnv *env, jclass type, jstring origin_) {
+
+
+    const char *originStr;
+    //将jstring转化成char *类型
+    originStr = env->GetStringUTFChars(origin_, false);
+
+    MD5 md5 = MD5(originStr);
+    std::string md5Result = md5.hexdigest();
+
+    env->ReleaseStringUTFChars(origin_, originStr);
+    //将char *类型转化成jstring返回给Java层
+    return env->NewStringUTF(md5Result.c_str());
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_encode_AesMd5Encode_Base64Encode(JNIEnv *env, jobject instance, jstring msg_) {
+
+    // 字符长度
+    size_t length = (size_t) env->GetStringUTFLength(msg_);
+    // 字符内容
+    char *c_msg = (char *) env->GetStringUTFChars(msg_, 0);
+
+    // 加密后的数组
+    char *result = base64_encode(c_msg, length);
+
+    env->ReleaseStringUTFChars(msg_, c_msg);
+
+    // 加密后的字符串
+    return env->NewStringUTF(result);
+
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_encode_AesMd5Encode_Base64Decode(JNIEnv *env, jobject instance, jstring msg_) {
+
+    // 解密字符串的 长度
+    size_t length = (size_t) env->GetStringUTFLength(msg_);
+    // 解密字符串的 内容
+    char *c_msg = (char *) env->GetStringUTFChars(msg_, 0);
+
+    // 解密后的字符串数组
+    const char *result = base64_decode(c_msg, length);
+    env->ReleaseStringUTFChars(msg_, c_msg);
+
+    // 解密后的字符串
+    return env->NewStringUTF(result);
+}
+
+//密钥
+unsigned char key[32] = {0x11, 0x3c, 0x7a, 0xb5, 0xa7, 0xcc, 0x4d, 0x6c,
+                         0x7c, 0x0a, 0x54, 0xb4, 0xb4, 0x3e, 0x28, 0x81,
+                         0x8d, 0x9b, 0x15, 0xd4, 0x31, 0xb6, 0x48, 0x88,
+                         0x89, 0x6c, 0xaa, 0x81, 0x95, 0x14, 0xad, 0x72};
+
+//初始化向量
+uint8_t iv[16] = {15, 10, 1, 2, 14, 3, 13, 4, 2, 5, 8, 6, 10, 7, 9, 8};
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_encode_AesMd5Encode_AesEncode(JNIEnv *env, jclass type, jstring src_) {
+
+    //****************************************开始加密******************************************************
+    //1.初始化数据
+    //初始化加密参数
+    aes256_context ctx;
+    aes256_init(&ctx, key);
+
+    //2.将jstring转为char
+    const char *src = env->GetStringUTFChars(src_, false);
+
+    //3.分组填充加密
+    //小于16字节，填充16字节，后面填充几个几 比方说10个字节 就要补齐6个6 11个字节就补齐5个5
+    //如果是16的倍数，填充16字节，后面填充0x10
+    int len = strlen(src);
+    int remainder = len % 16;
+    int group = len / 16;
+    int size = 16 * (group + 1);
+
+    uint8_t input[size];
+    for (int i = 0; i < size; i++) {
+        if (i < len) {
+            input[i] = src[i];
+        } else {
+            if (remainder == 0) {
+                input[i] = 0x10;
+            } else {    //如果不足16位 少多少位就补几个几  如：少4为就补4个4 以此类推
+                int dif = size - len;
+                input[i] = dif;
+            }
+        }
+    }
+    //释放src
+    env->ReleaseStringUTFChars(src_, src);
+
+    //加密
+    uint8_t output[size];
+    aes256_encrypt_cbc(&ctx, input, size, iv, output);
+
+    //base64加密后然后jstring格式输出
+    char *enc = base64_encode(reinterpret_cast<const char *>(output), sizeof(output));
+    jstring entryptString = env->NewStringUTF(enc);
+    free(enc);
+
+    return entryptString;
+}
+
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_encode_AesMd5Encode_AesDecode(JNIEnv *env, jclass type, jstring base64_) {
+
+    //将jstring转为char
+    const char *base64 = env->GetStringUTFChars(base64_, false);
+    //base64解密
+    char *src = base64_decode(base64, strlen(base64));
+    //释放base64
+    env->ReleaseStringUTFChars(base64_, base64);
+
+    //获取填充密文长度
+    int len = strlen(src);
+    //设置明文数组
+    unsigned char *out = (unsigned char *) malloc(len);
+    //ase解密
+    aes256_context ctx;
+    aes256_init(&ctx, key);
+    aes256_decrypt_cbc(&ctx, reinterpret_cast<unsigned char *>(src), len, iv, out);
+    //释放src
+    free(src);
+
+    //获取padding
+    int padding = out[len - 1];
+    int dlen = len - padding;
+    if (dlen <= 0) {
+        free(out);
+        return NULL;
+    }
+
+    //排除padding获取明文
+    unsigned char *dst = (unsigned char *) malloc(dlen);
+    memcpy(dst, out, dlen);
+    free(out);
+
+    return env->NewStringUTF(reinterpret_cast<const char *>(dst));
 }

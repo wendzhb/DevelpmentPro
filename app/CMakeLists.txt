@@ -17,6 +17,9 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
+             src/main/cpp/md5/MD5.cpp
+             src/main/cpp/base64/base64.c
+             src/main/cpp/aes/aes256.c
              src/main/cpp/native-lib.cpp)
 
 #include 这个目录下所有的文件
@@ -53,5 +56,4 @@ target_link_libraries( # Specifies the target library.
                        jpeg
                        #jnigraphics这个是android下面的bitmap.h对应的库
                        jnigraphics
-
                        ${log-lib} )
